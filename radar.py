@@ -277,3 +277,60 @@ if __name__ == "__main__":
         check_balances(c, cfg); conn.commit(); conn.close()
     elif args.action == "report":
         conn = connect_db(); print(report(conn.cursor())); conn.close()
+
+# === HTTP API for sync ===
+from http.server import HTTPServer, BaseHTTPRequestHandler
+import threading
+
+class RadarAPI(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.end_headers()
+        
+        try:
+            conn = connect_db()
+            c = conn.cursor()
+            
+            # 获取有余额地址
+            c.execute("""
+                SELECT ba.address, as2.balance_sats, as2.tx_count
+                FROM btc_addresses ba
+                JOIN address_status as2 ON as2.address_id = ba.id
+                WHERE as2.balance_sats > 0
+                ORDER BY as2.balance_sats DESC
+            """)
+            funded = [{"address": r[0], "balance_sats": r[1], "tx_count": r[2]} for r in c.fetchall()]
+            
+            # 获取统计
+            c.execute("SELECT COUNT(*) FROM sources")
+            sources = c.fetchone()[0]
+            c.execute("SELECT COUNT(*) FROM btc_addresses")
+            addrs = c.fetchone()[0]
+            
+            conn.close()
+            
+            result = {
+                "status": "ok",
+                "sources": sources,
+                "addresses": addrs,
+                "funded": funded,
+                "funded_count": len(funded)
+            }
+        except Exception as e:
+            result = {"status": "error", "message": str(e)}
+        
+        self.wfile.write(json.dumps(result).encode())
+    
+    def log_message(self, *a):
+        pass
+
+def start_api():
+    port = int(os.environ.get("PORT", 8080))
+    server = HTTPServer(("0.0.0.0", port), RadarAPI)
+    print(f"Radar API running on port {port}")
+    server.serve_forever()
+
+# 启动 API 服务（后台线程）
+if __name__ == "__main__":
+    threading.Thread(target=start_api, daemon=True).start()
