@@ -246,6 +246,11 @@ def run_all(cfg):
     n = check_balances(c, cfg)
     print(f"  Balances checked: {n} addresses")
     conn.commit()
+    # 输出有余额地址到日志（方便同步）
+    c.execute("SELECT ba.address, as2.balance_sats, as2.tx_count FROM btc_addresses ba JOIN address_status as2 ON as2.address_id = ba.id WHERE as2.balance_sats > 0 ORDER BY as2.balance_sats DESC")
+    for addr, bal, tx in c.fetchall():
+        print(f"FUNDED: {addr} {bal/1e8:.8f} BTC ({tx} tx)")
+    
     rpt = report(c)
     print(rpt)
     conn.close()
