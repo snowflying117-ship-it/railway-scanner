@@ -1,0 +1,13 @@
+{
+  "keyword_tiers": {
+    "S": ["\"wallet.dat\" leaked", "\"seed phrase\" paste", "\"private key\" exposed", "\"mnemonic\" backup file", "bitcoin private key found", "brainwallet password list"],
+    "A": ["bitcoin private key", "wallet backup", "mnemonic phrase", "seed phrase", "brainwallet", "wallet.dat", "bitcoinjs random", "bip39 wordlist", "hdwallet master key", "ecdsa nonce reuse", "bitcoin key collision", "private key generator weak"],
+    "B": ["bip39 phrase", "wallet recovery phrase", "private key txt", "bitcoin key dump", "wallet.dat recovery", "bitcoin puzzle transaction", "weak random bitcoin", "randstorm vulnerability"]
+  },
+  "stackexchange": {"enabled": true, "sites": ["bitcoin", "security", "stackoverflow", "superuser", "crypto"], "pagesize": 30, "max_keywords_per_tier": {"S": 6, "A": 12, "B": 8}},
+  "github": {"enabled": true, "queries": ["\"wallet.dat\" bitcoin", "\"seed phrase\" bitcoin", "\"bitcoin private key\"", "\"mnemonic phrase\" backup", "brainwallet bitcoin python", "\"bip39 wordlist\" bitcoin", "bitcoin private key generator", "ecdsa nonce reuse bitcoin", "bitcoin puzzle private key", "weak random bitcoin key"]},
+  "bitcoin_wiki": {"enabled": true, "max_pages_per_keyword": 10},
+  "address_blacklist": ["1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa", "12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX", "1CounterpartyXXXXXXXXXXXXXXXUWLpVr", "1BitcoinEaterAddressDontSendf59kuE"],
+  "balance_check": {"enabled": true, "api_base": "https://mempool.space/api/address", "max_addresses_per_run": 200},
+  "server_sync": {"enabled": false}
+}
